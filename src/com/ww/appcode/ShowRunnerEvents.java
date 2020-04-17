@@ -32,7 +32,9 @@ public class ShowRunnerEvents extends FirstWbGui {
 		});
 	}
 	
-	
+	//
+	// Put some text in the status line to say what's up
+	//
 	public void setStatus( String sts ) {
 		
 		lblStatusLine.setText( sts );
@@ -62,11 +64,24 @@ public class ShowRunnerEvents extends FirstWbGui {
 		}
 
 		setStatus("ShowRunner Started");
-		
-		showList.addElement("First Show");
+
+
+		System.out.println( "showList size "+ showList.size() );
+		showList.clear();
+		System.out.println( "showList size "+ showList.size() );
+		showList.setSize(4);
+		System.out.println( "showList size "+ showList.size() );
+		// just some junk to test the show list
+		showList.addElement("First Show what happens with very very very very long strings in the list what if there were a very long path here in the list");
 		showList.addElement("Second Show");
 		showList.addElement("Third Show");
 		showList.addElement("Fourth Show");
+		
+		System.out.println( "showList size "+ showList.size() );
+		
+		System.out.println( "showList capacity "+ showList.capacity() );
+
+		
 	}
 	
 

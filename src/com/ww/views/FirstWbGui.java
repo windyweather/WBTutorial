@@ -19,6 +19,8 @@ import javax.swing.JList;
 import javax.swing.SpringLayout;
 import java.awt.Component;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
+
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -35,10 +37,17 @@ public class FirstWbGui extends JFrame {
 	private static final long serialVersionUID = 19837502L;
 	
 	private JPanel contentPane;
-	private JTextField tfPathToImpress;
-	private JTextField txtOptions;
-	private JTextField txtShowPath;
-
+	protected JTextField tfPathToImpress;
+	protected JTextField txtOptions;
+	protected JTextField txtShowPath;
+	protected JLabel lblStatusLine;
+	//protected JList listShows = new JList();
+    protected DefaultListModel<String> showList = new DefaultListModel<>();  
+    //l1.addElement("Item1");  
+    //l1.addElement("Item2");  
+    //l1.addElement("Item3");  
+    //l1.addElement("Item4");  
+    protected JList<String> listShows = new JList<>(showList);  
 
 	/**
 	 * Launch the application.
@@ -121,7 +130,7 @@ public class FirstWbGui extends JFrame {
 		btnAddShow.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(btnAddShow);
 		
-		JList listShows = new JList();
+		
 		listShows.setBounds(15, 287, 690, 303);
 		listShows.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(listShows);
@@ -156,7 +165,7 @@ public class FirstWbGui extends JFrame {
 		lblListOfShows.setBounds(15, 253, 125, 24);
 		contentPane.add(lblListOfShows);
 		
-		JLabel lblStatusLine = new JLabel("status");
+		lblStatusLine = new JLabel("status");
 		lblStatusLine.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblStatusLine.setBounds(10, 705, 695, 29);
 		contentPane.add(lblStatusLine);

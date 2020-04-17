@@ -41,12 +41,9 @@ public class FirstWbGui extends JFrame {
 	protected JTextField txtOptions;
 	protected JTextField txtShowPath;
 	protected JLabel lblStatusLine;
-	//protected JList listShows = new JList();
+
     protected DefaultListModel<String> showList = new DefaultListModel<>();  
-    //l1.addElement("Item1");  
-    //l1.addElement("Item2");  
-    //l1.addElement("Item3");  
-    //l1.addElement("Item4");  
+ 
     protected JList<String> listShows = new JList<>(showList);  
 
 	/**

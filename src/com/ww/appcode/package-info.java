@@ -5,4 +5,4 @@
  * @author Darrell
  *
  */
-package com.ww.common;
+package com.ww.appcode;

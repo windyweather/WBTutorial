@@ -25,17 +25,25 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.SwingConstants;
 
+
+
+
+
 public class FirstWbGui extends JFrame {
 
+	// get rid of a warning about serialization.
+	private static final long serialVersionUID = 19837502L;
+	
 	private JPanel contentPane;
 	private JTextField tfPathToImpress;
 	private JTextField txtOptions;
 	private JTextField txtShowPath;
 
+
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+/**	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -47,11 +55,14 @@ public class FirstWbGui extends JFrame {
 			}
 		});
 	}
+**/
 
 	/**
 	 * Create the frame.
 	 */
 	public FirstWbGui() {
+		
+		System.out.println("FirstWbGui constructor reached");  
 		setResizable(false);
 		setFont(new Font("Dialog", Font.PLAIN, 12));
 		setTitle("FirstWbGui Test");

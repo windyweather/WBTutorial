@@ -26,6 +26,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.SwingConstants;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 
 
@@ -73,7 +75,7 @@ public class FirstWbGui extends JFrame {
 		setFont(new Font("Dialog", Font.PLAIN, 12));
 		setTitle("FirstWbGui Test");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 725, 777);
+		setBounds(100, 100, 725, 830);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -132,8 +134,8 @@ public class FirstWbGui extends JFrame {
 		listShows.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(listShows);
 		
-		JCheckBox ckbxBeepOnEnd = new JCheckBox("Beep on Show End");
-		ckbxBeepOnEnd.setBounds(15, 657, 165, 38);
+		JCheckBox ckbxBeepOnEnd = new JCheckBox("Beep at End of Show");
+		ckbxBeepOnEnd.setBounds(15, 666, 184, 29);
 		ckbxBeepOnEnd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(ckbxBeepOnEnd);
 		
@@ -164,7 +166,7 @@ public class FirstWbGui extends JFrame {
 		
 		lblStatusLine = new JLabel("status");
 		lblStatusLine.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblStatusLine.setBounds(10, 705, 695, 29);
+		lblStatusLine.setBounds(15, 750, 695, 29);
 		contentPane.add(lblStatusLine);
 		
 		JButton btnMoveTop = new JButton("Top");
@@ -181,5 +183,16 @@ public class FirstWbGui extends JFrame {
 		btnMoveDown.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnMoveDown.setBounds(264, 613, 79, 38);
 		contentPane.add(btnMoveDown);
+		
+		JSpinner spSecondsBetweenShows = new JSpinner();
+		spSecondsBetweenShows.setModel(new SpinnerNumberModel(5, 0, 99, 1));
+		spSecondsBetweenShows.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		spSecondsBetweenShows.setBounds(228, 703, 55, 20);
+		contentPane.add(spSecondsBetweenShows);
+		
+		JLabel lblSecsBetweenShows = new JLabel("Seconds Between Shows");
+		lblSecsBetweenShows.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblSecsBetweenShows.setBounds(15, 701, 203, 24);
+		contentPane.add(lblSecsBetweenShows);
 	}
 }

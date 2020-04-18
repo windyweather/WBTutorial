@@ -52,9 +52,14 @@ public class FirstWbGui extends JFrame {
 	protected JTextField txtOptions;
 	protected JTextField txtShowPath;
 	protected JLabel lblStatusLine;
+	// Create the showList and listShows up here so we have some more control
+	// and can access these from the child class more easily
+	// very nice that this change does not mess up parsing by window builder
+	protected DefaultListModel<String>showList = new DefaultListModel<String>();
+	protected JList<String> listShows = new JList<String>(showList);
 
-    protected DefaultListModel<String> showList = new DefaultListModel<>();  
-
+	// The launch point is in the child class so just
+	// comment it out here.
 	/**
 	 * Launch the application.
 	 */
@@ -235,16 +240,7 @@ public class FirstWbGui extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(15, 320, 683, 196);
 		contentPane.add(scrollPane);
-		
-		JList<String> listShows = new JList<String>(new AbstractListModel() {
-			String[] values = new String[] {"First Item", "Second Item", "Very Very Very long item that causes some scroll bars to appear because that's what we need to see.", "A moderately long item 4", "A moderately long item 5", "A moderately long item 6", "A moderately long item 7", "A moderately long item 8", "A moderately long item 9", "A moderately long item 10", "A moderately long item 11", "A moderately long item 12", "A moderately long item 13"};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
+
 		scrollPane.setViewportView(listShows);
 		listShows.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listShows.setFont(new Font("Tahoma", Font.PLAIN, 16));

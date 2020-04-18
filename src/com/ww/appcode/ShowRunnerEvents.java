@@ -5,6 +5,8 @@ package com.ww.appcode;
 
 import java.awt.EventQueue;
 
+import javax.swing.DefaultListModel;
+
 import com.ww.views.*;
 
 
@@ -65,14 +67,12 @@ public class ShowRunnerEvents extends FirstWbGui {
 
 		setStatus("ShowRunner Started");
 
+		// test our access to the show list
+		
+		System.out.println( "showList size "+ showList.getSize() );
+		showList.removeAllElements();
+		System.out.println( "showList size "+ showList.getSize() );
 
-		System.out.println( "showList size "+ showList.size() );
-		showList.clear();
-		System.out.println( "showList size "+ showList.size() );
-		showList.setSize(4);
-		System.out.println( "showList size "+ showList.size() );
-		// just some junk to test the show list
-		showList.addElement("First Show what happens with very very very very long strings in the list what if there were a very long path here in the list");
 		showList.addElement("Second Show");
 		showList.addElement("Third Show");
 		showList.addElement("Fourth Show");
@@ -80,6 +80,26 @@ public class ShowRunnerEvents extends FirstWbGui {
 		System.out.println( "showList size "+ showList.size() );
 		
 		System.out.println( "showList capacity "+ showList.capacity() );
+		
+		// add some new stuff to the list
+
+        showList.removeAllElements();
+		System.out.println( "showList removed "+ showList.size() );
+		System.out.println( "showList add stuff "+ showList.size() );
+		showList.addElement("USA");
+		showList.addElement("India");
+		showList.addElement("Vietnam");
+		showList.addElement("Canada");
+		showList.addElement("Denmark");
+		showList.addElement("France");
+		showList.addElement("Great Britain");
+		showList.addElement("Japan");
+		showList.addElement("First Show what happens with very very very very long strings in the list what if there were a very long path here in the list");
+
+		System.out.println( "showList stuff added size "+ showList.size() );
+		showList.removeAllElements(); // leave the list empty
+		System.out.println( "showList empty list size "+ showList.size() );
+
 
 		
 	}

@@ -22,6 +22,13 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.*;
 
+import javax.swing.JFileChooser;
+import java.io.File;  
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+import com.ww.views.HelpDialog;
+
 /**
  * @author Darrell
  *
@@ -173,7 +180,8 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	//
 	// use the java System.Properties class for ini files
-	// and write them in XML format
+	// and write them in XML format.
+	// Both the default file and the show files are stored in this way.
 	//
 	
 	private String propertyFilePathPrefix()
@@ -285,6 +293,153 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	 
 	}
 	
+	
+/**
+ * Event methods. Called by the dispatcher below.
+ */
+	//
+	// If the default for the LibreOffice Impress program path is not correct, then
+	// allow the user to browse for the executable file. Of course, she can just type
+	// it in if that's easier. It will be saved/restored with the defaults when the program
+	// exits
+	//
+	protected void browseForImpressProgram()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		
+		String path = tfPathToImpress.getText();
+		File defDir = new File(path);
+		defDir = new File (defDir.getParent() ); // find parent folder assuming path is a file
+		if ( !defDir.exists() ) // if that does not exist, then the home folder is a guess
+		{
+			defDir = new File(System.getProperty("user.home"));
+		}
+		// point fileChooser at a carefully chosen default
+		fileChooser.setCurrentDirectory(defDir);
+		// we don't need defaults for the file type on Linux or do we?
+		if ( isOsWindows() ) {
+			fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Executable", "exe"));
+		}
+		else {
+			fileChooser.setFileFilter(null); // allow all files on Linux I think
+		}
+		fileChooser.setAcceptAllFileFilterUsed(!isOsWindows());
+		fileChooser.setMultiSelectionEnabled(false);
+				
+		int result = fileChooser.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+		    File selectedFile = fileChooser.getSelectedFile();
+		    if ( selectedFile.canExecute() ) {
+		    	tfPathToImpress.setText(selectedFile.getAbsolutePath());
+			    System.out.println("Impress Program file: " + selectedFile.getAbsolutePath());
+		    }
+		    else {
+		    	setStatus("Choose the Impress program");
+		    	System.out.println("Impress Program file: " + selectedFile.getAbsolutePath());
+		    }
+		}
+		else {
+			setStatus("");
+		}
+	}
+	
+	//
+	// Browse for a .xml file that contains the list of shows to play.
+	//
+	protected void browseForShowToAdd()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		
+		String path = txtShowPath.getText();
+		File defDir = new File(path);
+		defDir = new File (defDir.getParent() ); // find parent folder assuming path is a file
+		if ( !defDir.exists() ) // if that does not exist, then the home folder is a guess
+		{
+			defDir = new File(System.getProperty("user.home"));
+		}
+		// point fileChooser at a carefully chosen default
+		fileChooser.setCurrentDirectory(defDir);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Impress Slides", "odp"));
+		fileChooser.setAcceptAllFileFilterUsed(true);
+		fileChooser.setMultiSelectionEnabled(false);
+				
+		int result = fileChooser.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+		    File selectedFile = fileChooser.getSelectedFile();
+	    	txtShowPath.setText(selectedFile.getAbsolutePath());
+		    System.out.println("Show File Path: " + selectedFile.getAbsolutePath());
+		    setStatus("Path to show set");
+		    }
+		else {
+			setStatus(""); // clear status line on cancel without change
+		}
+	}
+	
+	protected void addShowToList()
+	{
+		String showPath = txtShowPath.getText();
+		showList.addElement(showPath);		
+	}
+	
+	protected void saveShowList()
+	{
+		
+	}
+	
+	
+	protected void openShowList()
+	{
+		
+	}
+	
+	protected void moveShowToTop()
+	{
+		
+	}
+	
+	protected void moveShowUp()
+	{
+		
+	}
+	
+	protected void moveShowDown()
+	{
+		
+	}
+	
+	protected void removeSelectedShow()
+	{
+		
+	}
+	
+	protected void removeAllShows()
+	{
+		
+	}
+	
+	
+	protected void startShows()
+	{
+		
+	}
+	
+	protected void stopShows()
+	{
+		
+		
+	}
+	
+	
+	protected void showHelpDialog()
+	{
+		 System.out.println( "ShowRunnerEvents::showHelpDialog" );
+		HelpDialog dlg = new HelpDialog( new JFrame(), "no title here", true);
+		dlg.setVisible(true);
+	}
+	
+	
+	
+	
 	/**
 	* Catch all the events here in the child class
 	* use the same actionPerformed listener for every action
@@ -314,26 +469,50 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	    // of the gui items to keep it simple.
 	    // don't do code here, but call another method to actually do the work
 	    // to keep the dispatcher more readable.
+	    System.out.println( "ShowRunnerEvents::actionPerformed "+actionCommand );
 	    switch (actionCommand) {
-	        case "btnAddShow": 
-	    	    System.out.println( "ShowRunnerEvents::actionPerformed "+actionCommand );
-	        break;
-	        case "btnBrowseForShow": 
-	    	    System.out.println( "ShowRunnerEvents::actionPerformed "+actionCommand );
-	        break;
-	        case "mntmQuit": {
-	        	// do as little as possible
-	        	// allow the framework to do it all
-	        	dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-	        	
-	        }
-	        default:
-	        {
-	    	    System.out.println( "ShowRunnerEvents::Woops "+actionCommand );
-	        	break;
-	        }
+	    case "btnBrowseForImpress":
+	    	browseForImpressProgram();
+    	break;
+        case "btnBrowseForShow": 
+        	browseForShowToAdd();
+        break;
+        case "btnAddShow": 
+        	addShowToList();
+        break;
+
+        case "mntmQuit": {
+        	// do as little as possible
+        	// allow the framework to do it all
+        	dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        	
+        }
+        case "mntmHelpDialog": {
+        	showHelpDialog();
+        }
+        default:
+        {
+    	    //System.out.println( "ShowRunnerEvents::Woops "+actionCommand );
+        	break;
+        }
 	    }
 	}
 }
-
+/**
+ * mntmOpenShowList
+ * mntmSaveShowList
+ * mntmQuit
+ * mntmHelpDialog
+ * mntmAboutDialog
+ * btnBrowseForImpress
+ * btnBrowseForShow
+ * btnAddShow
+ * btnRemoveAll
+ * btnRemoveSelected
+ * btnStartShows
+ * btnStopShows
+ * btnMoveTop
+ * btnMoveUp
+ * btnMoveDown
+ */
 

@@ -152,17 +152,11 @@ public class FirstWbGui extends JFrame implements ActionListener
 		mnHelp.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		menuBar.add(mnHelp);
 		
-		JMenuItem mntmHelpDialog = new JMenuItem("Help...");
+		JMenuItem mntmHelpDialog = new JMenuItem("About...");
 		mntmHelpDialog.setActionCommand("mntmHelpDialog");
 		mntmHelpDialog.addActionListener(this);
 		mntmHelpDialog.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mnHelp.add(mntmHelpDialog);
-		
-		JMenuItem mntmAboutDialog = new JMenuItem("About...");
-		mntmAboutDialog.setActionCommand("mntmAboutDialog");
-		mntmAboutDialog.addActionListener(this);
-		mntmAboutDialog.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-		mnHelp.add(mntmAboutDialog);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

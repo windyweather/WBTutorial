@@ -294,6 +294,8 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	}
 	
 	
+	
+	
 /**
  * Event methods. Called by the dispatcher below.
  */
@@ -394,27 +396,76 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	protected void moveShowToTop()
 	{
-		
+		int selIndex = listShows.getSelectedIndex();
+		if ( selIndex == -1 ) {
+			setStatus("Select a show first");
+			return;
+		}
+		// rip it out and put it back at top
+		String showPath = showList.remove(selIndex);
+		showList.add( 0,  showPath );
+		listShows.setSelectedIndex(0);
+		setStatus("Show moved to top");
 	}
 	
 	protected void moveShowUp()
 	{
-		
+		int selIndex = listShows.getSelectedIndex();
+		if ( selIndex == -1 ) {
+			setStatus("Select a show first");
+			return;
+		}
+		if ( selIndex == 0 ) {
+			setStatus("Show is at the top");
+			return;
+		}
+		// rip it out and put it back one at lower index
+		String showPath = showList.remove(selIndex);
+		showList.add( selIndex-1,  showPath );
+		listShows.setSelectedIndex(selIndex-1);
+		setStatus("Show moved up");
+
 	}
 	
 	protected void moveShowDown()
 	{
-		
+		int selIndex = listShows.getSelectedIndex();
+		if ( selIndex == -1 ) {
+			setStatus("Select a show first");
+			return;
+		}
+		int count = showList.size();
+		if ( selIndex == (count-1) ) {
+			setStatus("Show is at the bottom");
+			return;
+		}
+		// rip it out and put it back at higher index
+		String showPath = showList.remove(selIndex);
+		showList.add( selIndex+1,  showPath );
+		listShows.setSelectedIndex(selIndex+1);
+		setStatus("Show moved down");
+
 	}
 	
 	protected void removeSelectedShow()
 	{
-		
+		int selIndex = listShows.getSelectedIndex();
+		if ( selIndex == -1 ) {
+			setStatus("Select a show first");
+			return;
+		}
+
+		// rip it out
+		String showPath = showList.remove(selIndex);
+		setStatus("Show removed");
+
 	}
 	
 	protected void removeAllShows()
 	{
-		
+		//listShows.removeAll();
+		showList.clear();
+		setStatus("All shows removed");
 	}
 	
 	
@@ -480,7 +531,40 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         case "btnAddShow": 
         	addShowToList();
         break;
-
+        case "btnRemoveAll": {
+        	removeAllShows();
+        	break;
+        }
+        case "btnRemoveSelected": {
+        	removeSelectedShow();
+        	break;
+        }
+        case "btnStartShows": {
+        	break;
+        }
+        case "btnStopShows": {
+        	break;
+        }
+        case "btnMoveTop": {
+        	moveShowToTop();
+        	break;
+        }
+        case "btnMoveUp": {
+        	moveShowUp();
+        	break;
+        }
+        case "btnMoveDown": {
+        	moveShowDown();
+        	break;
+        }
+        case "mntmOpenShowList": {
+        	openShowList();
+        	break;
+        }
+        case "mntmSaveShowList": {
+        	saveShowList();
+        	break;
+        }
         case "mntmQuit": {
         	// do as little as possible
         	// allow the framework to do it all

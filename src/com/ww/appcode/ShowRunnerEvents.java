@@ -9,21 +9,25 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
+/*
 import javax.swing.DefaultListModel;
+import java.io.StringReader;
+import java.io.StringWriter;
+*/
+import java.io.File;
+
 
 import com.ww.views.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-//
+
 import java.io.IOException; 
-import java.io.StringReader;
-import java.io.StringWriter;
+
 import java.util.*;
 
 import javax.swing.JFileChooser;
-import java.io.File;  
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
@@ -298,6 +302,44 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
  * Event methods. Called by the dispatcher below.
  */
 	//
+	// get a reasonable path from possibly an empty string
+	// Assume we are passed a path to a file, or an empty string
+	// something bogus
+	//
+	String getReasonablePath( String startPath )
+	{
+		File defDir;
+		// protect ourselves against bad stuff if we can
+		try {
+			String path = txtShowPath.getText();
+			if ( path.isEmpty() )
+			{	// if the field is empty, then just use home path and
+				// do not look for it's parent
+				path = System.getProperty("user.home");
+				defDir = new File(path);
+			}
+			else
+			{
+				// find parent folder assuming that the path points to a show.
+				defDir = new File(path);
+				defDir = new File (defDir.getParent() );
+			}
+			// if that does not exist, then the home folder is a guess
+			if ( !defDir.exists() )
+			{
+				defDir = new File(System.getProperty("user.home"));
+			}
+			// return the path to the place we found
+			return defDir.getAbsolutePath();
+		}
+		catch (Exception e) {
+			//setStatus("Can't find a folder to start with");
+			//System.out.println("browseForShowToAdd - Exception");
+			// if this is not a valid directory, then we are in serious trouble here
+			return System.getProperty("user.home");
+		 }
+	}
+	//
 	// If the default for the LibreOffice Impress program path is not correct, then
 	// allow the user to browse for the executable file. Of course, she can just type
 	// it in if that's easier. It will be saved/restored with the defaults when the program
@@ -307,13 +349,8 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	{
 		JFileChooser fileChooser = new JFileChooser();
 		
-		String path = tfPathToImpress.getText();
+		String path = getReasonablePath( tfPathToImpress.getText() );
 		File defDir = new File(path);
-		defDir = new File (defDir.getParent() ); // find parent folder assuming path is a file
-		if ( !defDir.exists() ) // if that does not exist, then the home folder is a guess
-		{
-			defDir = new File(System.getProperty("user.home"));
-		}
 		// point fileChooser at a carefully chosen default
 		fileChooser.setCurrentDirectory(defDir);
 		// we don't need defaults for the file type on Linux or do we?
@@ -349,15 +386,12 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	protected void browseForShowToAdd()
 	{
 		JFileChooser fileChooser = new JFileChooser();
+		File defDir;
 		
-		String path = txtShowPath.getText();
-		File defDir = new File(path);
-		defDir = new File (defDir.getParent() ); // find parent folder assuming path is a file
-		if ( !defDir.exists() ) // if that does not exist, then the home folder is a guess
-		{
-			defDir = new File(System.getProperty("user.home"));
-		}
+		// start with a possibly empty path to a show we looked at.
+		String path = getReasonablePath(txtShowPath.getText());
 		// point fileChooser at a carefully chosen default
+		defDir = new File(path);
 		fileChooser.setCurrentDirectory(defDir);
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Impress Slides", "odp"));
 		fileChooser.setAcceptAllFileFilterUsed(true);

@@ -3,19 +3,20 @@ package com.ww.views;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import java.awt.FlowLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.border.EmptyBorder;
 import java.awt.Font;
+/*
+import javax.swing.JScrollBar;
 import java.awt.Point;
+import java.awt.ScrollPane;
+*/
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextPane;
-import java.awt.ScrollPane;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -23,6 +24,8 @@ import java.awt.event.ActionEvent;
 
 public class HelpDialog extends JDialog {
 
+	// get rid of a warning about serialization.
+	private static final long serialVersionUID = 19837505L;
 	private final JPanel contentPanel = new JPanel();
 
 	/**

@@ -88,18 +88,24 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	}
 	
 	//
+	// Do this in one place so we can easily turn it off later
+	//
+	private void printSysOut( String str ) {
+		System.out.println(str);
+	}
+	//
 	// Class Constructor
 	//
 	public ShowRunnerEvents() {
 		
-		System.out.println("ShowRunnerEvents constructor reached");
+		printSysOut("ShowRunnerEvents constructor reached");
 		
 		
 	    String s = 
 	    	      "name: " + System.getProperty ("os.name");
 	    	    s += ", version: " + System.getProperty ("os.version");
 	    	    s += ", arch: " + System.getProperty ("os.arch");
-	    	    System.out.println ("OS=" + s);
+	    	    printSysOut ("OS=" + s);
 		
 		// Set up some default values depending on the OS we find
 
@@ -116,23 +122,23 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 
 		// test our access to the show list
 		/**
-		System.out.println( "showList size "+ showList.getSize() );
+		printSysOut( "showList size "+ showList.getSize() );
 		showList.removeAllElements();
-		System.out.println( "showList size "+ showList.getSize() );
+		printSysOut( "showList size "+ showList.getSize() );
 
 		showList.addElement("Second Show");
 		showList.addElement("Third Show");
 		showList.addElement("Fourth Show");
 		
-		System.out.println( "showList size "+ showList.size() );
+		printSysOut( "showList size "+ showList.size() );
 		
-		System.out.println( "showList capacity "+ showList.capacity() );
+		printSysOut( "showList capacity "+ showList.capacity() );
 		
 		// add some new stuff to the list
 
         showList.removeAllElements();
-		System.out.println( "showList removed "+ showList.size() );
-		System.out.println( "showList add stuff "+ showList.size() );
+		printSysOut( "showList removed "+ showList.size() );
+		printSysOut( "showList add stuff "+ showList.size() );
 		showList.addElement("USA");
 		showList.addElement("India");
 		showList.addElement("Vietnam");
@@ -167,15 +173,15 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		showList.addElement("Japan");
 		showList.addElement("First Show what happens with very very very very long strings in the list what if there were a very long path here in the list");
 
-		System.out.println( "showList stuff added size "+ showList.size() );
-		System.out.println( "showList capacity "+ showList.capacity() );
+		printSysOut( "showList stuff added size "+ showList.size() );
+		printSysOut( "showList capacity "+ showList.capacity() );
 		showList.removeAllElements(); // leave the list empty
-		System.out.println( "showList empty list size "+ showList.size() );
+		printSysOut( "showList empty list size "+ showList.size() );
 		 **/
 		
 		
 		String userDir = System.getProperty("user.home");
-		System.out.println("user.home "+ userDir);
+		printSysOut("user.home "+ userDir);
 
 		// Restore the defaults to the gui
 		restoreDefaultsFile(); 
@@ -215,7 +221,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	        in.close();
         }
         catch(IOException ex){
-            System.out.println("Defaults not found " + defaultsFile);
+            printSysOut("Defaults not found " + defaultsFile);
             return;
         }
         
@@ -234,7 +240,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         }
         
 
-        System.out.println("restoreDefaultsFile "+defaultsFile);
+        printSysOut("restoreDefaultsFile "+defaultsFile);
         defProps.list(System.out); 
 	}
 	
@@ -247,9 +253,9 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		
 	    File directory = new File(defaultsDir);
 	    if (! directory.exists()){
-	    	System.out.println("saveDefaultsFile Creating defaults dir " + defaultsDir);
+	    	printSysOut("saveDefaultsFile Creating defaults dir " + defaultsDir);
 	        directory.mkdir();
-	    	System.out.println("saveDefaultsFile Created defaults dir  " + defaultsDir);  
+	    	printSysOut("saveDefaultsFile Created defaults dir  " + defaultsDir);  
 	        // If you require it to make the entire directory path including parents,
 	        // use directory.mkdirs(); here instead.
 	    }
@@ -260,7 +266,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 			out = new FileOutputStream(defaultsFile);
         }
         catch(IOException ex){
-            System.out.println("saveDefaultsFile open failure " + defaultsFile);
+            printSysOut("saveDefaultsFile open failure " + defaultsFile);
             return;
         }
 
@@ -272,11 +278,11 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	        // store the properties into specified xml 
 	        defProps.storeToXML(out, null);
 	        out.close();
-	        System.out.println("saveDefaultsFile");
+	        printSysOut("saveDefaultsFile");
 	        defProps.list(System.out); 
         }
         catch(IOException ex){
-            System.out.println("saveDefaultsFile write fail " + defaultsFile);
+            printSysOut("saveDefaultsFile write fail " + defaultsFile);
             return;
         }
 	}
@@ -286,7 +292,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	@Override
 	public void windowClosingEvent(WindowEvent e) {
 		
-		System.out.println( "windowClosing - save your stuff here" );
+		printSysOut( "windowClosing - save your stuff here" );
 		// write the defaults file
 		saveDefaultsFile();
 		
@@ -336,7 +342,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		}
 		catch (Exception e) {
 			//setStatus("Can't find a folder to start with");
-			//System.out.println("browseForShowToAdd - Exception");
+			//printSysOut("browseForShowToAdd - Exception");
 			// if this is not a valid directory, then we are in serious trouble here
 			return System.getProperty("user.home");
 		 }
@@ -370,11 +376,11 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		    File selectedFile = fileChooser.getSelectedFile();
 		    if ( selectedFile.canExecute() ) {
 		    	tfPathToImpress.setText(selectedFile.getAbsolutePath());
-			    System.out.println("Impress Program file: " + selectedFile.getAbsolutePath());
+			    printSysOut("Impress Program file: " + selectedFile.getAbsolutePath());
 		    }
 		    else {
 		    	setStatus("Choose the Impress program");
-		    	System.out.println("Impress Program file: " + selectedFile.getAbsolutePath());
+		    	printSysOut("Impress Program file: " + selectedFile.getAbsolutePath());
 		    }
 		}
 		else {
@@ -403,7 +409,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		if (result == JFileChooser.APPROVE_OPTION) {
 		    File selectedFile = fileChooser.getSelectedFile();
 	    	txtShowPath.setText(selectedFile.getAbsolutePath());
-		    System.out.println("Show File Path: " + selectedFile.getAbsolutePath());
+		    printSysOut("Show File Path: " + selectedFile.getAbsolutePath());
 		    setStatus("Path to show set");
 		    }
 		else {
@@ -417,19 +423,194 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		showList.addElement(showPath);		
 	}
 	
+	
+	//
+	// Get a path to open a show list
+	//
+	protected String showListOpenPath()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		File defDir;
+		
+		// start with a possibly empty path to a show we looked at.
+		String path = getReasonablePath(txtShowPath.getText());
+		// point fileChooser at a carefully chosen default
+		defDir = new File(path);
+		fileChooser.setCurrentDirectory(defDir);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Show List", "xml"));
+		fileChooser.setAcceptAllFileFilterUsed(true);
+		fileChooser.setMultiSelectionEnabled(false);
+				
+		int result = fileChooser.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+	    File selectedFile = fileChooser.getSelectedFile();
+	    printSysOut("Show List Path: " + selectedFile.getAbsolutePath());
+	    return selectedFile.getAbsolutePath();
+	    }
+		else {
+			//setStatus(""); // clear status line on cancel without change
+		}
+		return new String(""); // empty string for nothing chosen
+	}
+	
+	//
+	// Get a path to save a show list
+	//
+	protected String showListSavePath()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		File defDir;
+		
+		// start with a possibly empty path to a show we looked at.
+		String path = getReasonablePath(txtShowPath.getText());
+		// point fileChooser at a carefully chosen default
+		defDir = new File(path);
+		fileChooser.setCurrentDirectory(defDir);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Show List", "xml"));
+		fileChooser.setAcceptAllFileFilterUsed(true);
+		fileChooser.setMultiSelectionEnabled(false);
+				
+		int result = fileChooser.showSaveDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+		    File selectedFile = fileChooser.getSelectedFile();
+		    printSysOut("Show List Path: " + selectedFile.getAbsolutePath());
+		    //setStatus("Path to show set");
+		    String savePath = selectedFile.getAbsolutePath();
+		    if (!savePath .endsWith(".xml"))
+		    	savePath += ".xml";
+		    return savePath;
+		    }
+		else {
+			//setStatus(""); // clear status line on cancel without change
+		}
+		return new String(""); // empty string for nothing chosen
+	}
+	
+	
+	//
+	// Save a show list as an XML file using the Properties class
+	//
 	protected void saveShowList()
 	{
+		int count = showList.size();
+		if ( count <= 0 ) {
+			setStatus("No shows to save");
+			return;
+		}
+		String savePath = showListSavePath();
+		if ( savePath.isEmpty() ) {
+			return;
+		}
+
+	    File saveFile = new File(savePath);
+	    if (saveFile.exists()){
+
+	    	// do we need to do anything, or did dialog do it?
+	    }
+        Properties saveProps = new Properties(); 
+        FileOutputStream out;
+		try {
+			out = new FileOutputStream(saveFile);
+        }
+        catch(IOException ex){
+            printSysOut("saveShowList open failure " + savePath);
+            return;
+        }
+
+		// write the show list count to the props
+		saveProps.put("ShowListCount", String.valueOf(count) ); 
+
+		// save all the shows to the props with unique keys
+		for ( int showIdx=0; showIdx<count; showIdx++ ) {
+			String key = "ShowPath_"+String.valueOf(showIdx);
+			String showPath = showList.elementAt(showIdx);
+			saveProps.put(key, showPath );
+		}
 		
+        // write the XML and catch any errors
+		try {
+	        // store the properties into specified xml 
+			saveProps.storeToXML(out, null);
+	        out.close();
+	        printSysOut("saveShowList closed");
+	        saveProps.list(System.out); 
+	        setStatus("Show List Saved");
+        }
+        catch(IOException ex){
+            printSysOut("saveShowList write fail " + savePath);
+            setStatus("Show List Save Failed");
+        }
+
 	}
 	
 	
-	protected void openShowList()
-	{
+
+	
+	
+	//
+	// Open a Show List from an XML file
+	//
+	protected void openShowList() {
+		//
+		// get a path to read some shows
+		//
+		setStatus(""); // clear the status
+		String openPath = showListOpenPath();
+
+		if (openPath.isEmpty()) {
+			return;
+		}
 		
+	    File openFile = new File(openPath);
+	    if (!openFile.exists()){
+
+	    	setStatus("No show list to open");
+	    }
+	    
+
+        Properties openProps = new Properties(); 
+        FileInputStream in;
+		try {
+			// open the input file and read the XML into props
+			in = new FileInputStream(openFile);
+			openProps.loadFromXML(in);
+			in.close();
+        }
+        catch(IOException ex){
+            printSysOut("openShowList open failure " + openPath);
+            setStatus("Can't read that show list");
+            return;
+        }
+
+		// read the show list count to the props
+		int count = Integer.valueOf( openProps.getProperty("ShowListCount") );
+		if ( count <= 0)
+		{
+			setStatus("No shows in that list");
+			return;
+		}
+		
+		// last minute clear of the list we have
+		showList.clear();
+
+		// read all the shows with unique keys and add to list
+		for ( int showIdx=0; showIdx<count; showIdx++ ) {
+			String key = "ShowPath_"+String.valueOf(showIdx);
+			String showPath = openProps.getProperty(key );
+			showList.addElement(showPath);
+		}
+		
+		printSysOut("openShowList show opened");
+        openProps.list(System.out); 
+        setStatus("Show list opened");
+
 	}
 	
-	protected void moveShowToTop()
-	{
+	
+	//
+	// Events to adjust order of shows in the list
+	//
+	protected void moveShowToTop() {
 		int selIndex = listShows.getSelectedIndex();
 		if ( selIndex == -1 ) {
 			setStatus("Select a show first");
@@ -497,7 +678,6 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	protected void removeAllShows()
 	{
-		//listShows.removeAll();
 		showList.clear();
 		setStatus("All shows removed");
 	}
@@ -517,7 +697,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	protected void showHelpDialog()
 	{
-		 System.out.println( "ShowRunnerEvents::showHelpDialog" );
+		 printSysOut( "ShowRunnerEvents::showHelpDialog" );
 		HelpDialog dlg = new HelpDialog( new JFrame(), "no title here", true);
 		dlg.setVisible(true);
 	}
@@ -545,16 +725,16 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	**/
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//System.out.println( "ShowRunnerEvents::actionPerformed" );
+		//printSysOut( "ShowRunnerEvents::actionPerformed" );
 		// get the command string we set in the dialog
 	    String actionCommand = e.getActionCommand();
 
-	    //System.out.println( "ShowRunnerEvents::actionPerformed "+actionCommand );
+	    //printSysOut( "ShowRunnerEvents::actionPerformed "+actionCommand );
 	    // build a dispatcher on those command strings, which are the names
 	    // of the gui items to keep it simple.
 	    // don't do code here, but call another method to actually do the work
 	    // to keep the dispatcher more readable.
-	    System.out.println( "ShowRunnerEvents::actionPerformed "+actionCommand );
+	    printSysOut( "ShowRunnerEvents::actionPerformed "+actionCommand );
 	    switch (actionCommand) {
 	    case "btnBrowseForImpress":
 	    	browseForImpressProgram();
@@ -610,7 +790,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         }
         default:
         {
-    	    //System.out.println( "ShowRunnerEvents::Woops "+actionCommand );
+    	    //printSysOut( "ShowRunnerEvents::Woops "+actionCommand );
         	break;
         }
 	    }

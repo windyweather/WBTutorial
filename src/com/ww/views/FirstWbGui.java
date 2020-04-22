@@ -148,6 +148,21 @@ public class FirstWbGui extends JFrame implements ActionListener
 		mntmSaveShowList.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mnFile.add(mntmSaveShowList);
 		
+		JSeparator separator_1 = new JSeparator();
+		mnFile.add(separator_1);
+		
+		JMenuItem mntmSaveDefaults = new JMenuItem("Save Defaults");
+		mntmSaveDefaults.setActionCommand("mntmSaveDefaults");
+		mntmSaveDefaults.addActionListener(this);
+		mntmSaveDefaults.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnFile.add(mntmSaveDefaults);
+		
+		JMenuItem mntmRestoreDefaults = new JMenuItem("Restore Defaults");
+		mntmRestoreDefaults.setActionCommand("mntmRestoreDefaults");
+		mntmRestoreDefaults.addActionListener(this);
+		mntmRestoreDefaults.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnFile.add(mntmRestoreDefaults);
+		
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
 		

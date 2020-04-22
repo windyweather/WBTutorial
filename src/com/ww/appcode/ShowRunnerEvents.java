@@ -4,6 +4,9 @@
 package com.ww.appcode;
 
 import java.awt.EventQueue;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Robot;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -131,6 +134,10 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		bShowRunning = false;
 		nShowIndex = 0;
 		
+		// init these once, not each time we start timer
+		aTimer = new Timer();
+		//timerTask = new MyTimerTask();
+		
 	    String s = 
 	    	      "name: " + System.getProperty ("os.name");
 	    	    s += ", version: " + System.getProperty ("os.version");
@@ -252,6 +259,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         }
         catch(IOException ex){
             printSysOut("Defaults not found " + defaultsFile);
+            setStatus("No Defaults found");
             return;
         }
         
@@ -272,6 +280,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 
         printSysOut("restoreDefaultsFile "+defaultsFile);
         defProps.list(System.out); 
+        setStatus("Defaults restored");
 	}
 	
 	//
@@ -292,6 +301,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		String defaultsFile = defaultsFilePath();
         Properties defProps = new Properties(); 
         FileOutputStream out;
+        setStatus("Unable to write defaults");
 		try {
 			out = new FileOutputStream(defaultsFile);
         }
@@ -315,6 +325,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
             printSysOut("saveDefaultsFile write fail " + defaultsFile);
             return;
         }
+		setStatus("Defaults saved");
 	}
 	
 	// catch the window closing event
@@ -450,7 +461,8 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	protected void addShowToList()
 	{
 		String showPath = txtShowPath.getText();
-		showList.addElement(showPath);		
+		showList.addElement(showPath);
+		setStatus("Show added");
 	}
 	
 	
@@ -731,6 +743,27 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 			setStatus("No shows in list");
 			return;
 		}
+		
+		/*
+		 * Move the mouse South a little ways to prevent click on button again
+		 */
+		try {
+			PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+			Point location = pointerInfo.getLocation();
+			int x = (int) location.getX();
+			int y = (int) location.getY();
+	
+			printSysOut("startShows - mouse (" +String.valueOf(x)+","+String.valueOf(y)+")");
+			Robot robot = new Robot();
+			robot.mouseMove(x, y + 100);
+			/*
+			 * Ok Mouse is out of the way of the buttons
+			 */
+		} catch (Exception e ) {
+			// what can I say? We tried.
+		}
+
+		
 		nShowIndex = 0; //start at first show
 		bShowRunning = true;
 		// start the timer and then start the next show
@@ -749,7 +782,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		if ( !bShowRunning )
 		{
 			setStatus("Shows are not running");
-			return;
+			//return;
 		}
 		bShowRunning = false;
 		setStatus("Hit ESC to end current show");
@@ -853,6 +886,15 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         	saveShowList();
         	break;
         }
+        case "mntmSaveDefaults": {
+        	saveDefaultsFile();
+        	break;
+        }
+        case "mntmRestoreDefaults": {
+        	restoreDefaultsFile();
+        	break;
+        }
+        
         case "mntmQuit": {
         	// do as little as possible
         	// allow the framework to do it all
@@ -953,11 +995,26 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	public void startTimer( long msecsPerTic ) {
 		try {
+			/*
 			if ( bTimerRunning ) {
+				timerTask.cancel();
+				bTimerRunning = false;
 				printSysOut("startTimer already running" );
-				return;
 			}
-			aTimer = new Timer();
+			//aTimer = new Timer();
+			 */
+
+			/*
+			 * Before starting another task, make sure
+			 * we have cancelled the last one. Lingering
+			 * mouse clicks have been a problem.
+			 */
+			bTimerRunning = false;
+			try {
+				timerTask.cancel();
+			} catch (Exception ee) {
+				// just ignore this
+			}
 			timerTask = new MyTimerTask();
 			aTimer.schedule(timerTask, MS_TIMER_TICK, MS_TIMER_TICK);
 			bTimerRunning = true;
@@ -965,17 +1022,24 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		} catch (Exception ex)
 		{
 			// just ignore any exceptions
-			printSysOut("startTimer exception" );
+			printSysOut("startTimer exception "+ex.getMessage() );
+			//ex.printStackTrace(System.out);
 		}
 	
 	}
 	
+	/*
+	 * use a heavy hand here since we've had lingering timers
+	 */
 	public void stopTimer() {
 		try {
+			/*
 			if ( !bTimerRunning ) {
+				timerTask.cancel(); // hammer timer anyway
 				printSysOut("stopTimer not running" );
 				return;
 			}
+			*/
 			bTimerRunning = false;
 			timerTask.cancel();
 			printSysOut("stopTimer cancelled" );

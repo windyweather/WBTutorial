@@ -4,7 +4,9 @@
 package com.ww.appcode;
 
 import java.awt.EventQueue;
+import java.awt.Robot;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
@@ -16,7 +18,6 @@ import java.io.StringWriter;
 */
 import java.io.File;
 
-
 import com.ww.views.*;
 
 import java.io.FileInputStream;
@@ -25,8 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException; 
 
 import java.util.*;
-
-import javax.swing.JFileChooser;
+import java.util.Timer;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -37,10 +37,30 @@ import com.ww.views.HelpDialog;
  * @author Darrell
  *
  */
+
 public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	// get rid of a warning about serialization.
 	private static final long serialVersionUID = 19837503L;
+
+	// 5 seconds between mouse clicks while show is up
+	private static final int MS_TIMER_TICK = 5000;
+	
+	
+	/*
+	 * Data for timer and show process control
+	 */
+	private boolean bTimerRunning;		// timer is running
+	private boolean bShowRunning;		// shows are running
+	private int		nShowIndex;			// show we are now running
+	/*
+	 * Control classes for timer and shows
+	 */
+	private Timer aTimer;
+	private MyTimerTask timerTask;
+	private Process pShowProcess;
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -65,6 +85,13 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		lblStatusLine.setText( sts );
 	}
 
+	/*
+	 * usually means that everything worked up to now
+	*/
+	public boolean isStatusEmpty() {
+		return lblStatusLine.getText().isEmpty();
+	}
+	
 	private boolean isOsWindows()
 	{
 		String osName = System.getProperty ("os.name");
@@ -672,6 +699,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 
 		// rip it out
 		String showPath = showList.remove(selIndex);
+		printSysOut("removeSelectedShow removed "+showPath);
 		setStatus("Show removed");
 
 	}
@@ -685,13 +713,54 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	
 	protected void startShows()
 	{
+		/**
+		 * if there are shows, then set the index, mark shows running
+		 * 
+		 */
+		setStatus(""); // we can check for errors now
+		if ( bShowRunning )
+		{
+			setStatus("Shows are running");
+			return;
+		}
+		if ( showList.isEmpty() )
+		{
+			setStatus("No shows in list");
+			return;
+		}
+		nShowIndex = 0; //start at first show
+		bShowRunning = true;
+		// start the timer and then start the next show
+		startTimer( MS_TIMER_TICK );
+		startNextShow();
+		if ( isStatusEmpty() ) { // so far so good
+			setStatus("Shows started");
+		} // otherwise leave status already there
 		
 	}
 	
 	protected void stopShows()
 	{
+		// stop the mouse clicks
+		stopTimer();
+		if ( !bShowRunning )
+		{
+			setStatus("Shows are not running");
+			return;
+		}
+		bShowRunning = false;
+		setStatus("Hit ESC to end current show");
 		
-		
+		try {
+			printSysOut("endShow waiting for show to end");
+			// wait for current show to clean up, or toss exception
+			pShowProcess.waitFor();
+			printSysOut("stopShows show ended");
+				
+		} catch (Exception ex ) {
+			printSysOut("stopShows exception");
+		}
+		setStatus("Shows stopped");
 	}
 	
 	
@@ -754,9 +823,11 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         	break;
         }
         case "btnStartShows": {
+        	startShows();
         	break;
         }
         case "btnStopShows": {
+        	stopShows();
         	break;
         }
         case "btnMoveTop": {
@@ -795,7 +866,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
         }
 	    }
 	}
-}
+
 /**
  * mntmOpenShowList
  * mntmSaveShowList
@@ -813,4 +884,191 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
  * btnMoveUp
  * btnMoveDown
  */
+		
+	/*
+	 * a timer task to tick down the time
+	 * up the tics and click the mouse
+	*/
+	private class MyTimerTask extends TimerTask {
+		@Override
+		public void run() {
+			// if done with timers, stop us
+			if ( !bTimerRunning ) {
+				// absolutely stop us
+				this.cancel();
+				return;
+			}
+				
+			// try to click the mouse here
+			try {
+				Robot bot = new Robot();
+				int mask = InputEvent.BUTTON1_DOWN_MASK;
+				// don't move the mouse in case the user wants to click on Stop Show or
+				// something else. It will be fine, the show will stop on the click
+				// if it's at the end.
+				//bot.mouseMove(100, 100);           
+				bot.mousePress(mask);     
+			
+				try {
+					// hang for a bit before release
+				    Thread.sleep(100);
+				}
+				catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				    printSysOut("MyTimerTask interrupted");
+				}
+				bot.mouseRelease(mask);
+			}
+			catch (Exception e ) {
+				printSysOut("MyTimerTask Robot exception");
+			}
+			
+			// if the show is running, watch for it to end in a strange way
+			
+			if ( bShowRunning ) {
+				
+				try {
+					// so, rather than a wait, we check for exit value
+					// and if that tosses an exception, the process is
+					// still running. Ooooooookkkkkaaaaaayyyyyy No Problem
+					int exitValue = pShowProcess.exitValue();
+					// guess we don't do this to get rid of the not referened warning
+					//(void)exitValue;
+					// we don't care what the exit value was
+					exitValue = 0;
+					// but if we get here, then the show stopped, so
+					// if we stop it now, it won't need to wait, it will be fine
+					// we think.
+					endShow();
+				} catch (Exception ex) {
+					// Process is still running. So just keep going until
+					// mouse clicks or something else stops the show
+				}
+			}
+		}
+	}
+	
+	public void startTimer( long msecsPerTic ) {
+		try {
+			if ( bTimerRunning ) {
+				printSysOut("startTimer already running" );
+				return;
+			}
+			aTimer = new Timer();
+			timerTask = new MyTimerTask();
+			aTimer.schedule(timerTask, MS_TIMER_TICK, MS_TIMER_TICK);
+			bTimerRunning = true;
+			printSysOut("startTimer started for "+String.valueOf(MS_TIMER_TICK) );
+		} catch (Exception ex)
+		{
+			// just ignore any exceptions
+			printSysOut("startTimer exception" );
+		}
+	
+	}
+	
+	public void stopTimer() {
+		try {
+			if ( !bTimerRunning ) {
+				printSysOut("stopTimer not running" );
+				return;
+			}
+			bTimerRunning = false;
+			timerTask.cancel();
+			printSysOut("stopTimer cancelled" );
+		} catch (Exception ex) {
+			printSysOut("stopTimer exception" );
+		}
+	}
 
+
+	/*
+	 * Start the next show based on the nShowIndex
+	 */
+	public void startNextShow() {
+		String showPath = showList.get(nShowIndex);
+		
+		startShowPlaying( tfPathToImpress.getText(),
+				txtOptions.getText(),
+				showPath);
+		
+	}
+	
+	public void startShowPlaying( String sImpress, String sOptions, String sShowPath ) {
+		
+		String cmdString = sImpress +" "+sOptions+" "+sShowPath;
+		try {
+			pShowProcess = Runtime.getRuntime().exec( cmdString );
+			printSysOut("startShowPlaying show started"+sShowPath);
+			// if for some reason the timer is still running
+			// stop it so we can restart it
+			if ( bTimerRunning ) {
+				stopTimer();
+			}
+			startTimer( MS_TIMER_TICK );
+		} catch (Exception ex ) {
+			printSysOut("startShowPlaying exception");
+		}
+	
+	}
+	
+	/*
+	 * Only called from timer routine if the end check does
+	 * not toss an exception. So, only if show has ended.
+	 */
+	public void endShow() {
+		if ( !bShowRunning ) {
+			printSysOut("endShow show not running");
+			return;
+		}
+		// we cannot use destroy() since that would leave the Impress show
+		// in a bad state. So all we can do is wait on the user to stop the
+		// show and then clean up.
+		
+		try {
+			// stop the mouse clicks
+			stopTimer();
+			printSysOut("endShow waiting for show to end");
+			setStatus("Stop the show if it's running");
+			// we only get here if timer sensed show had ended
+			// so this should never wait, but just in case
+			pShowProcess.waitFor();
+			setStatus("Next show starting");
+			printSysOut("endShow show ended");
+			
+			/**
+			 * beep if we were told to between shows
+			 */
+			if ( ckbxBeepOnEnd.isSelected() ) {
+				// Ring the bell using the Toolkit 
+				java.awt.Toolkit.getDefaultToolkit().beep();
+			}
+			
+			/**
+			 * just hang out until time for the next show.
+			 * Maybe someday make this more elegant, but this works for now.
+			 **/
+			try {
+				spSecondsBetweenShows.commitEdit();
+			} catch ( java.text.ParseException e ) {
+				// ignore the exception if any
+			}
+			int nSecsBetweenShows = (Integer) spSecondsBetweenShows.getValue();
+			Thread.sleep(nSecsBetweenShows*1000);
+			
+			/**
+			 * wrap the index around and start the next show
+			 */
+			nShowIndex++;
+			if ( nShowIndex >= showList.getSize() ) {
+				nShowIndex = 0;
+			}
+			startNextShow(); // obviously, start the next show
+			
+		} catch (Exception ex ) {
+			printSysOut("stopShow exception");
+			setStatus("Failed to start next show");
+			bShowRunning = false; // try to clean up
+		}
+	}
+} // end of ShowRunnerEvents class

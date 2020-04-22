@@ -63,6 +63,9 @@ public class FirstWbGui extends JFrame implements ActionListener
 	protected JTextField txtOptions;
 	protected JTextField txtShowPath;
 	protected JLabel lblStatusLine;
+	protected JCheckBox ckbxBeepOnEnd;
+	protected JSpinner spSecondsBetweenShows;
+	
 	// Create the showList and listShows up here so we have some more control
 	// and can access these from the child class more easily
 	// very nice that this change does not mess up parsing by window builder
@@ -222,7 +225,7 @@ public class FirstWbGui extends JFrame implements ActionListener
 		btnAddShow.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(btnAddShow);
 		
-		JCheckBox ckbxBeepOnEnd = new JCheckBox("Beep at End of Show");
+		ckbxBeepOnEnd = new JCheckBox("Beep at End of Show");
 		ckbxBeepOnEnd.setBounds(15, 546, 184, 29);
 		ckbxBeepOnEnd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		contentPane.add(ckbxBeepOnEnd);
@@ -286,7 +289,7 @@ public class FirstWbGui extends JFrame implements ActionListener
 		btnMoveDown.setBounds(317, 254, 84, 38);
 		contentPane.add(btnMoveDown);
 		
-		JSpinner spSecondsBetweenShows = new JSpinner();
+		spSecondsBetweenShows = new JSpinner();
 		spSecondsBetweenShows.setModel(new SpinnerNumberModel(5, 0, 99, 1));
 		spSecondsBetweenShows.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		spSecondsBetweenShows.setBounds(228, 583, 55, 20);

@@ -1000,9 +1000,17 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	 * Execute the command in another process.
 	 */
 	public void startShowPlaying( String sImpress, String sOptions, String sShowPath ) {
-		
-		String quotedShowPath = "\""+sShowPath+"\"";
+		/*
+		 * Let's quote the path string. Double quotes may cause problems on
+		 * linux. Not clear why.
+		 */
+		String quote = "\"";
+		if ( isOsLinux() ) {
+			quote = "'";
+		}
+		String quotedShowPath = quote +sShowPath+quote;
 		String cmdString = sImpress +" "+sOptions+" "+quotedShowPath;
+		printSysOut("startShowPlaying command "+cmdString);
 		try {
 			pShowProcess = Runtime.getRuntime().exec( cmdString );
 			printSysOut("startShowPlaying show started"+sShowPath);

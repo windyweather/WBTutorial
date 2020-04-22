@@ -1005,14 +1005,17 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		 * linux. Not clear why.
 		 */
 		String quote = "\"";
+		String quotedShowPath;
 		if ( isOsLinux() ) {
-			quote = "'";
+			quote = "";
+			quotedShowPath = sShowPath.replace(" ", "\\ ");
 		}
-		String quotedShowPath = quote +sShowPath+quote;
+		quotedShowPath = quote +sShowPath+quote;
 		String cmdString = sImpress +" "+sOptions+" "+quotedShowPath;
+		String cmdAry[] = {sImpress, sOptions, quotedShowPath};
 		printSysOut("startShowPlaying command "+cmdString);
 		try {
-			pShowProcess = Runtime.getRuntime().exec( cmdString );
+			pShowProcess = Runtime.getRuntime().exec( cmdAry );
 			printSysOut("startShowPlaying show started"+sShowPath);
 			// if for some reason the timer is still running
 			// stop it so we can restart it
@@ -1023,6 +1026,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		} catch (Exception ex ) {
 			setStatus("Can't start the show");
 			stopTimer();
+			printSysOut("Exeption "+ex.getMessage() );
 			printSysOut("startShowPlaying exception");
 		}
 	

@@ -18,3 +18,4 @@ Features
     Saves and opens lists of slide shows in XML files
     Allows editing and reordering the slide shows in the list
 
+ 

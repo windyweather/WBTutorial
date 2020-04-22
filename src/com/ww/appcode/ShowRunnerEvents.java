@@ -127,6 +127,9 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		
 		printSysOut("ShowRunnerEvents constructor reached");
 		
+		bTimerRunning = false;
+		bShowRunning = false;
+		nShowIndex = 0;
 		
 	    String s = 
 	    	      "name: " + System.getProperty ("os.name");
@@ -1015,8 +1018,17 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		String cmdAry[] = {sImpress, sOptions, quotedShowPath};
 		printSysOut("startShowPlaying command "+cmdString);
 		try {
-			pShowProcess = Runtime.getRuntime().exec( cmdAry );
+			pShowProcess = Runtime.getRuntime().exec( cmdString );
 			printSysOut("startShowPlaying show started"+sShowPath);
+
+		} catch (Exception ex ) {
+			setStatus("Can't start the show");
+			stopTimer();
+			printSysOut("Exception "+ex.getMessage() );
+			printSysOut("startShowPlaying exception");
+			return;
+		}
+		try {
 			// if for some reason the timer is still running
 			// stop it so we can restart it
 			if ( bTimerRunning ) {
@@ -1024,7 +1036,7 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 			}
 			startTimer( MS_TIMER_TICK );
 		} catch (Exception ex ) {
-			setStatus("Can't start the show");
+			setStatus("Can't start the show timer");
 			stopTimer();
 			printSysOut("Exeption "+ex.getMessage() );
 			printSysOut("startShowPlaying exception");

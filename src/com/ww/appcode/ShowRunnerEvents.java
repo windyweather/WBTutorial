@@ -994,9 +994,15 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 		
 	}
 	
+	/*
+	 * Quote the show path in case there are spaces
+	 * Path strings should not contain quotes so this should work fine.
+	 * Execute the command in another process.
+	 */
 	public void startShowPlaying( String sImpress, String sOptions, String sShowPath ) {
 		
-		String cmdString = sImpress +" "+sOptions+" "+sShowPath;
+		String quotedShowPath = "\""+sShowPath+"\"";
+		String cmdString = sImpress +" "+sOptions+" "+quotedShowPath;
 		try {
 			pShowProcess = Runtime.getRuntime().exec( cmdString );
 			printSysOut("startShowPlaying show started"+sShowPath);
@@ -1007,6 +1013,8 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 			}
 			startTimer( MS_TIMER_TICK );
 		} catch (Exception ex ) {
+			setStatus("Can't start the show");
+			stopTimer();
 			printSysOut("startShowPlaying exception");
 		}
 	

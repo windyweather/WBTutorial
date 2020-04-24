@@ -1062,28 +1062,71 @@ public class ShowRunnerEvents  extends FirstWbGui implements ActionListener{
 	}
 	
 	/*
-	 * Quote the show path in case there are spaces
-	 * Path strings should not contain quotes so this should work fine.
+	 * Build the string array of the command, options and path and clean up options
+	 * we are using an array to preserve and pass through spaces in Impress path and show path.
+	 * Also any special characters should be passed along more robustly using String[] rather
+	 * than just a string for the whole thing.
+	 */
+	public String [] buildCommandArray( String sImpress, String sOptions, String sShowPath ) {
+		
+		String [] cmdArray = {sImpress};
+		String [] cmdArray2;
+		String [] cmdArray3;
+		// leave impress path alone. Note spaces "\Program Files\" are present on Windows
+		// however, options are user-typed. So remove any extra blanks and bust up into
+		// individual strings.
+		String [] saOptions = {};
+		if ( !sOptions.isBlank() && !sOptions.isEmpty() ) {
+			
+			try {
+				saOptions = sOptions.split(" ");
+				
+			} catch ( Exception ex ) {
+				saOptions[0] = sOptions; // let user deal with the issue
+				printSysOut("buildCommandArray problem with splitting options string");
+			}
+		}
+		// add options if we have some
+		if ( saOptions.length != 0  ) {
+			// left as an exercise for the reader
+			cmdArray2 = Arrays.copyOf(cmdArray, cmdArray.length + saOptions.length);
+			System.arraycopy(saOptions, 0, cmdArray2, cmdArray.length, saOptions.length);
+		} else {
+			cmdArray2 = cmdArray;
+		}
+		// finally add the show path and leave spaces in it
+		int N = cmdArray2.length;
+		cmdArray3 = Arrays.copyOf(cmdArray2, N + 1);
+		cmdArray3[N] = sShowPath;
+		return cmdArray3;
+	}
+	
+
+	
+	/*
+	 * Build the command array to avoid problems with spaces, dashes, parens in path
 	 * Execute the command in another process.
 	 */
 	public void startShowPlaying( String sImpress, String sOptions, String sShowPath ) {
-		/*
-		 * Let's quote the path string. Double quotes may cause problems on
-		 * linux. Not clear why.
-		 */
-		String quote = "\"";
-		String quotedShowPath;
-		if ( isOsLinux() ) {
-			quote = "";
-			quotedShowPath = sShowPath.replace(" ", "\\ ");
-		} else {
-			quotedShowPath = quote +sShowPath+quote;
+
+		// for display purposes
+		String cmdString = sImpress +" "+sOptions+" "+sShowPath;
+		
+		String[] cmdArray;
+		cmdArray = buildCommandArray(sImpress, sOptions, sShowPath);
+		if ( cmdArray.length == 0 ) {
+			setStatus("No show to play");
+			printSysOut("startShowPlaying no show "+cmdString );
+			return;
 		}
-		String cmdString = sImpress +" "+sOptions+" "+quotedShowPath;
-		//String cmdAry[] = {sImpress, sOptions, quotedShowPath};
 		printSysOut("startShowPlaying command "+cmdString);
+		printSysOut("Command Array:");
+		for (String cmd : cmdArray){
+			printSysOut("|"+cmd+"|");
+			}
+		printSysOut("----");
 		try {
-			pShowProcess = Runtime.getRuntime().exec( cmdString );
+			pShowProcess = Runtime.getRuntime().exec( cmdArray );
 			printSysOut("startShowPlaying show started"+ cmdString);
 
 		} catch (Exception ex ) {
